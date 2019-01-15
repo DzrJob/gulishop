@@ -10,17 +10,22 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-import os
+import os,sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+#项目的绝对根路径
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+# apps整合后路径
+sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
+# 第三方apps整合路径
+sys.path.insert(0,os.path.join(BASE_DIR,'extra_apps'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'z4di(so30n8zx%iok1o3wgf065-qs@_+!(-y-n=g@b6nvr5)dv'
+# 跨站请求伪造保护 秘钥
+SECRET_KEY = '8d48#s%6(o737pgsgeou9j#=fj@486srxvg)^*8%_0ysngdq5r'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -29,7 +34,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
+# APP注册
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,8 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',
+    'goods.apps.GoodsConfig',
+    'trade.apps.TradeConfig',
+    'operations.apps.OperationsConfig',
 ]
-
+# 中间件
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -49,9 +57,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+# 主程序路径
 ROOT_URLCONF = 'gulishop.urls'
-
+# 模板 自定义
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -64,6 +72,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # 将media加入上下文渲染，模板中使用{{MEDIA_URL}}
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -74,18 +84,22 @@ WSGI_APPLICATION = 'gulishop.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
+# 数据库
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'gulishop',
+        'USER': 'root',
+        'PASSWORD': '123456',
+        'HOST': 'localhost',
+        'POST': '3306',
     }
 }
 
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
-
+# 验证
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -104,19 +118,25 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
+# 国际化
+LANGUAGE_CODE = 'zh-hans'
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
-
+# 静态文件路径
 STATIC_URL = '/static/'
+STATICFILES_DIRS=[
+    os.path.join(BASE_DIR,'static')
+]
+# 媒体文件路径 存放上传的文件
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
