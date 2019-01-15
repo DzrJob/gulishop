@@ -140,3 +140,6 @@ STATICFILES_DIRS=[
 # 媒体文件路径 存放上传的文件
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+
+# 因为USER继承,所以要重新确定路径
+AUTH_USER_MODEL = 'users.UserProfile'
