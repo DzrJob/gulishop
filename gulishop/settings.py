@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os, sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+# os.path.dirname 文件所在目录路径
+# os.path.abspath 文仔所在路径
+# os.path.join 把目录和文件名合成一个路径
 # 项目的绝对根路径
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # apps整合后路径
