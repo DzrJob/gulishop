@@ -19,12 +19,12 @@ import django
 django.setup()
 # 不能放在上面
 from goods.models import Goods,GoodsCategory,GoodsImage
-from db_tools.data.category_data import row_data
+from db_tools.data.product_data import row_data
 
 # 遍历获取数据
 for item in row_data:
     goods = Goods()
-    goods.name = item['item']
+    goods.name = item['name']
     goods.goods_brief = item['desc'] if item['desc'] else ''
     goods.desc = item['goods_desc'] if item['goods_desc'] else ''
     goods.market_price = float(item['market_price'].replace('￥','').replace('元',''))
@@ -38,7 +38,7 @@ for item in row_data:
         goods.category = category_list[0]
     goods.save()
 
-    for image in item['image']:
+    for image in item['images']:
         goods_image = GoodsImage()
         goods_image.goods = goods
         goods_image.image = image
