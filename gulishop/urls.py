@@ -13,15 +13,16 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
-from django.contrib import admin
+from django.conf.urls import url,include
+import xadmin
 # 引入静态文件的serve
 from django.views.static import serve
 # 导入工程配置文件中的MEDIA_ROOT
 from gulishop.settings import MEDIA_ROOT
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    url(r'^xadmin/', xadmin.site.urls),
     # 该url专门处理媒体文件media路径访问
     url(r'^media/(?P<path>.*)', serve, {'document_root': MEDIA_ROOT}),
+    url(r'^ueditor/', include('DjangoUeditor.urls')),
 ]
