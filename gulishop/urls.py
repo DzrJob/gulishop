@@ -20,9 +20,40 @@ from django.views.static import serve
 # 导入工程配置文件中的MEDIA_ROOT
 from gulishop.settings import MEDIA_ROOT
 
+# from apps.goods.views import GoodsView
+from apps.goods.views import GoodsViewSet
+from rest_framework import routers
+
+"""
+# 创建默认的router对象，并注册视图集
+# 与SimpleRouter的区别，DefaultRouter会多附带一个默认的API根视图，返回一个包含所有列表视图的超链接响应数据。
+# register(prefix, viewset, base_name)
+# prefix 该视图集的路由前缀
+# viewset 视图集
+# base_name 路由名称的前缀
+"""
+router = routers.DefaultRouter()
+router.register(r'goods', GoodsViewSet, base_name='goods')
+
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
     # 该url专门处理媒体文件media路径访问
     url(r'^media/(?P<path>.*)', serve, {'document_root': MEDIA_ROOT}),
+    # 配置富文本器
     url(r'^ueditor/', include('DjangoUeditor.urls')),
+
+    # 配置 rest_framework
+    url(r'^api-auth/', include('rest_framework.urls')),
+
+    # 配置 接口的路由
+    # url(r'^goods/$',GoodsView.as_view()),
+
+    # 绑定 接口的请求方法（接口中可以不写get方法了）
+    # url(r'^goods/$', GoodsViewSet.as_view({'get': 'list'})),
+    # 添加路由数据方式一
+    # url(r'^', include(router.urls))
 ]
+# 添加路由数据方式二
+urlpatterns+=router.urls
+
+

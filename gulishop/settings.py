@@ -53,7 +53,12 @@ INSTALLED_APPS = [
     'xadmin',
     'crispy_forms',
     # 富文本
-    'DjangoUeditor'
+    'DjangoUeditor',
+    # drf接口
+    'rest_framework',
+    # 过滤器
+    'django_filters'
+
 ]
 # 中间件
 MIDDLEWARE = [
@@ -147,3 +152,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # 因为USER继承,所以要重新确定路径
 AUTH_USER_MODEL = 'users.UserProfile'
+
+# 全局分页配置
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+}

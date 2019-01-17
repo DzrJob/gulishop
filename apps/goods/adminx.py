@@ -30,7 +30,7 @@ class GoodsCategoryAdmin(object):
 class GoodsAdmin(object):
     list_display = ['category', 'name', 'goods_sn', 'goods_front_image', 'click_num', 'add_time']
     # desc应用富文本
-    style_fields = ['desc', 'ueditor']
+    style_fields = {'desc': 'ueditor'}
 
 
 # 赞助信息
