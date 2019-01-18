@@ -72,10 +72,12 @@ class GoodsViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
 # class GoodsView(View):
     # # 第一种方式，python自带序列化，序列化不方便，不支持图片序列化json
     # def get(self, request):
+          # queryset
     #     all_goods = Goods.objects.all()
     #     # 第一种序列化
     #     items = []
     #     for goods in all_goods:
+              # query对象转字典
     #         item = {}
     #         item['name'] = goods.name
     #         item['shop_price'] = goods.shop_price
