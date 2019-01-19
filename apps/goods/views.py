@@ -8,7 +8,7 @@ from rest_framework import mixins, generics, pagination, filters,viewsets
 from django_filters.rest_framework import DjangoFilterBackend
 
 """使用rest_framework GenericAPIView扩展类GenericViewSet与mixins组合 实现接口"""
-class GoodsViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
+class GoodsViewSet(mixins.ListModelMixin,mixins.RetrieveModelMixin,viewsets.GenericViewSet):
     # 必要的查询集
     queryset = Goods.objects.all()
     # 过滤配置（区间，搜索，排序）

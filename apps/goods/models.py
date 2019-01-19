@@ -25,7 +25,7 @@ class Goods(models.Model):
     name = models.CharField(max_length=100,verbose_name="商品名称")
     goods_sn = models.CharField(max_length=30,verbose_name="商品唯一编号",unique=True,null=True,blank=True)
     goods_brief = models.CharField(max_length=300,verbose_name="商品简介",null=True,blank=True)
-    desc = UEditorField(verbose_name='商品详情',
+    goods_desc = UEditorField(verbose_name='商品详情',
                         width=900,
                         height=400,
                         toolbars='full',
