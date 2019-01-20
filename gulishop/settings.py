@@ -58,6 +58,8 @@ INSTALLED_APPS = [
     'rest_framework',
     # 过滤器
     'django_filters'
+    # 跨站访问
+    'corsheaders',
 
 ]
 # 中间件
@@ -69,6 +71,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 跨站访问
+    'corsheaders.middleware.CorsMiddleware',
 ]
 # 主程序路径
 ROOT_URLCONF = 'gulishop.urls'
@@ -153,8 +157,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # 因为USER继承,所以要重新确定路径
 AUTH_USER_MODEL = 'users.UserProfile'
 
-# 全局分页配置
+# 全局配置
 REST_FRAMEWORK = {
+    # 分页配置
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     # 'PAGE_SIZE': 10,
 }
+
+# 跨站访问
+CORS_ORIGIN_ALLOW_ALL = True
