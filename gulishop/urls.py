@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url,include
+from django.conf.urls import url, include
 # token认证
 from rest_framework.authtoken import views
 # jwt认证
@@ -24,8 +24,8 @@ from django.views.static import serve
 # 导入工程配置文件中的MEDIA_ROOT
 from gulishop.settings import MEDIA_ROOT
 # from apps.goods.views import GoodsView
-from apps.goods.views import GoodsViewSet,CategoryViewSet
-from apps.users.views import VerifyCodeViewSet
+from apps.goods.views import GoodsViewSet, CategoryViewSet
+from apps.users.views import VerifyCodeViewSet, UserViewSet
 from rest_framework import routers
 
 """
@@ -38,8 +38,9 @@ from rest_framework import routers
 """
 router = routers.DefaultRouter()
 router.register(r'goods', GoodsViewSet, base_name='goods')
-router.register(r'categorys',CategoryViewSet,base_name='categorys')
-router.register(r'code',VerifyCodeViewSet,base_name='code')
+router.register(r'categorys', CategoryViewSet, base_name='categorys')
+router.register(r'code', VerifyCodeViewSet, base_name='code')
+router.register(r'users', UserViewSet, base_name='users')
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
@@ -65,6 +66,4 @@ urlpatterns = [
     url(r'^login/', obtain_jwt_token),
 ]
 # 添加路由数据方式二
-urlpatterns+=router.urls
-
-
+urlpatterns += router.urls

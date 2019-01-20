@@ -2,12 +2,11 @@ from django.shortcuts import render
 from random import choice
 from rest_framework import mixins, viewsets, status
 from rest_framework.response import Response
+from rest_framework_jwt.utils import jwt_payload_handler, jwt_encode_handler
 from gulishop.settings import YUNPIAN_KEY
-from users.models import VerifyCode
-from users.serializer import VerifyCodeSerializer
+from users.models import VerifyCode, UserProfile
+from users.serializer import VerifyCodeSerializer, UserSerializer
 from utils.yunpian import YunPian
-
-
 # Create your views here.
 
 
@@ -43,3 +42,28 @@ class VerifyCodeViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         for i in range(6):
             code += choice(str)
         return code
+
+
+class UserViewSet(mixins.CreateModelMixin,viewsets.GenericViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserSerializer
+
+    # 默认的不会给mobile存数据，也不会给密码加密 需要重写
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data['username']
+        password = serializer.validated_data['password']
+        user = UserProfile()
+        user.username = username
+        user.mobile = username
+        user.set_password(password)
+        user.save()
+        # 如果你需要注册后直接就是登陆状态，那么你需要把token手动生成 返回给前端进行设置
+        payload = jwt_payload_handler(user)
+        token = jwt_encode_handler(payload)
+        ret = serializer.data
+        ret['name'] = user.name if user.name else user.username
+        ret['token'] = token
+
+        return Response(ret, status=status.HTTP_201_CREATED)

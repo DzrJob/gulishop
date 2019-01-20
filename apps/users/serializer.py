@@ -1,4 +1,6 @@
 # -*-coding:utf-8-*-
+from rest_framework.validators import UniqueValidator
+
 __author__ = 'Dzr'
 import re
 from datetime import datetime
@@ -20,7 +22,7 @@ class VerifyCodeSerializer(serializers.ModelSerializer):
         # 第三步：判断手机是不是已经在规定时间内发送过短信
         verify_code = VerifyCode.objects.filter(mobile=mobile)
         if verify_code:
-            if (datetime.now() - verify_code[0].add_time).second <= 60:
+            if (datetime.now() - verify_code[0].add_time).seconds <= 60:
                 raise serializers.ValidationError('验证码发送间隔为1分钟')
             verify_code[0].delete()
         return mobile
@@ -28,3 +30,27 @@ class VerifyCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = VerifyCode
         fields = ['mobile']
+
+
+class UserSerializer(serializers.ModelSerializer):
+    # validators 集合中验证唯一
+    username = serializers.CharField(required=True,max_length=30,min_length=11,
+                                     validators=[UniqueValidator(queryset=UserProfile.objects.all())])
+    # write_only只允许验证，不允许序列化
+    password = serializers.CharField(required=True,max_length=20,min_length=6,write_only=True)
+    code = serializers.CharField(required=True, max_length=6, min_length=6, write_only=True)
+
+    # code验证方法
+    def validate_code(self,code):
+        # 输入的用户名进来验证之前的数据存在initial_data中
+        mobile = self.initial_data['username']
+        verify_code = VerifyCode.objects.filter(mobile=mobile,code=code)
+        if verify_code:
+            if (datetime.now()-verify_code[0].add_time).seconds > 1800:
+                raise serializers.ValidationError('验证码已经够过期，重新发送')
+        else:
+            raise serializers.ValidationError('手机或者验证码出错')
+
+    class Meta:
+        model = UserProfile
+        fields = ['username','password','code']
