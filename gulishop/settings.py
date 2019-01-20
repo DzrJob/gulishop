@@ -178,3 +178,9 @@ REST_FRAMEWORK = {
 
 # 跨站访问
 CORS_ORIGIN_ALLOW_ALL = True
+
+# 过期时间
+import datetime
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
+}
