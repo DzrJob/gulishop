@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     # drf接口
     'rest_framework',
     # 过滤器
-    'django_filters'
+    'django_filters',
     # 跨站访问
     'corsheaders',
 
