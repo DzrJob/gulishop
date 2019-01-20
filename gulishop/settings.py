@@ -60,6 +60,8 @@ INSTALLED_APPS = [
     'django_filters',
     # 跨站访问
     'corsheaders',
+    # token认证
+    # 'rest_framework.authtoken',
 
 ]
 # 中间件
@@ -162,6 +164,16 @@ REST_FRAMEWORK = {
     # 分页配置
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     # 'PAGE_SIZE': 10,
+
+    # 认证配置
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        # token认证
+        # 'rest_framework.authentication.TokenAuthentication',
+        # jwt认证
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    )
 }
 
 # 跨站访问

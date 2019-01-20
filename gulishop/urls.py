@@ -14,12 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url,include
+# token认证
+from rest_framework.authtoken import views
+# jwt认证
+from rest_framework_jwt.views import obtain_jwt_token
 import xadmin
 # 引入静态文件的serve
 from django.views.static import serve
 # 导入工程配置文件中的MEDIA_ROOT
 from gulishop.settings import MEDIA_ROOT
-
 # from apps.goods.views import GoodsView
 from apps.goods.views import GoodsViewSet,CategoryViewSet
 from rest_framework import routers
@@ -54,6 +57,11 @@ urlpatterns = [
     # url(r'^goods/$', GoodsViewSet.as_view({'get': 'list'})),
     # 添加路由数据方式一
     # url(r'^', include(router.urls))
+
+    # 是token认证的登陆方式
+    # url(r'^login/', views.obtain_auth_token),
+    # JWTtoken认证的登陆方式
+    url(r'^login/', obtain_jwt_token),
 ]
 # 添加路由数据方式二
 urlpatterns+=router.urls
