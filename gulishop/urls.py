@@ -25,6 +25,7 @@ from django.views.static import serve
 from gulishop.settings import MEDIA_ROOT
 # from apps.goods.views import GoodsView
 from apps.goods.views import GoodsViewSet,CategoryViewSet
+from apps.users.views import VerifyCodeViewSet
 from rest_framework import routers
 
 """
@@ -38,7 +39,7 @@ from rest_framework import routers
 router = routers.DefaultRouter()
 router.register(r'goods', GoodsViewSet, base_name='goods')
 router.register(r'categorys',CategoryViewSet,base_name='categorys')
-
+router.register(r'code',VerifyCodeViewSet,base_name='code')
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
