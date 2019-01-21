@@ -55,3 +55,10 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['username','password','code']
+
+
+# 用户中心
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['name', 'birthday', 'gender', 'email', 'mobile']
