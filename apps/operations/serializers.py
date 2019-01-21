@@ -1,7 +1,7 @@
 #-*-coding:utf-8-*-
 __author__ = 'Dzr'
 from goods.serializers import GoodsSerializer
-from operations.models import UserFav
+from operations.models import UserFav, UserLeavingMessage
 from rest_framework import serializers
 
 
@@ -28,4 +28,15 @@ class UserFavListSerializer(serializers.ModelSerializer):
     goods = GoodsSerializer(many=False)
     class Meta:
         model = UserFav
+        fields = '__all__'
+
+
+class UserLeavingMessageSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+    add_time = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M:%S")
+
+    class Meta:
+        model = UserLeavingMessage
         fields = '__all__'
