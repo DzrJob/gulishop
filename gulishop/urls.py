@@ -27,7 +27,7 @@ from gulishop.settings import MEDIA_ROOT
 from apps.goods.views import GoodsViewSet, CategoryViewSet
 from apps.users.views import VerifyCodeViewSet, UserViewSet
 from rest_framework import routers
-from operations.views import UserFavViewSet,UserLeavingMessageViewSet
+from operations.views import UserFavViewSet,UserLeavingMessageViewSet,UserAddressViewSet
 
 """
 # 创建默认的router对象，并注册视图集
@@ -44,6 +44,7 @@ router.register(r'code', VerifyCodeViewSet, base_name='code')
 router.register(r'users', UserViewSet, base_name='users')
 router.register(r'userfavs',UserFavViewSet,base_name='userfavs')
 router.register(r'messages',UserLeavingMessageViewSet,base_name='messages')
+router.register(r'address',UserAddressViewSet,base_name='address')
 
 
 urlpatterns = [

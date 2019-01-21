@@ -51,13 +51,13 @@ class UserAddress(models.Model):
     province = models.CharField(max_length=50, verbose_name="省")
     city = models.CharField(max_length=50, verbose_name="市")
     district = models.CharField(max_length=50, verbose_name="区")
-    signing_name = models.CharField(max_length=20, verbose_name="收货人")
-    signing_mobile = models.CharField(max_length=11, verbose_name="收货电话")
+    signer_name = models.CharField(max_length=20, verbose_name="收货人")
+    signer_mobile = models.CharField(max_length=11, verbose_name="收货电话")
     address = models.CharField(max_length=300, verbose_name="收货地址")
     add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
 
     def __str__(self):
-        return self.signing_name
+        return self.signer_name
 
     class Meta:
         verbose_name = '用户收货地址信息'
