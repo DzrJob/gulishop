@@ -33,11 +33,12 @@ class VerifyCodeSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # validators 集合中验证唯一
+    # validators验证器 集合中验证唯一
     username = serializers.CharField(required=True,max_length=30,min_length=11,
                                      validators=[UniqueValidator(queryset=UserProfile.objects.all())])
-    # write_only只允许验证，不允许序列化
-    password = serializers.CharField(required=True,max_length=20,min_length=6,write_only=True)
+    # write_only 只允许验证，不允许序列化
+    # style 避免明文密码
+    password = serializers.CharField(required=True,max_length=20,min_length=6,write_only=True,style={'input_type':'password'})
     code = serializers.CharField(required=True, max_length=6, min_length=6, write_only=True)
 
     # code验证方法

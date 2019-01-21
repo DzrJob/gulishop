@@ -50,7 +50,11 @@ class UserViewSet(mixins.CreateModelMixin,viewsets.GenericViewSet):
 
     # 默认的不会给mobile存数据，也不会给密码加密 需要重写
     def create(self, request, *args, **kwargs):
+        # request.data returns the parsed content of the request body. This is similar to the standard request.POST and request.FILES
+        # request.query_params is a more correctly named synonym for request.GET
+        # 验证
         serializer = self.get_serializer(data=request.data)
+        # 是否合法
         serializer.is_valid(raise_exception=True)
         username = serializer.validated_data['username']
         password = serializer.validated_data['password']
