@@ -28,6 +28,8 @@ from apps.goods.views import GoodsViewSet, CategoryViewSet
 from apps.users.views import VerifyCodeViewSet, UserViewSet
 from rest_framework import routers
 
+from operations.views import UserFavViewSet
+
 """
 # 创建默认的router对象，并注册视图集
 # 与SimpleRouter的区别，DefaultRouter会多附带一个默认的API根视图，返回一个包含所有列表视图的超链接响应数据。
@@ -41,6 +43,8 @@ router.register(r'goods', GoodsViewSet, base_name='goods')
 router.register(r'categorys', CategoryViewSet, base_name='categorys')
 router.register(r'code', VerifyCodeViewSet, base_name='code')
 router.register(r'users', UserViewSet, base_name='users')
+router.register(r'userfavs',UserFavViewSet,base_name='userfavs')
+
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),

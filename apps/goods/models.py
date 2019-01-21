@@ -34,7 +34,7 @@ class Goods(models.Model):
                         upload_settings={'imageMaxSizing': 1024000},
                         default='')
 
-    goods_front_image = models.ImageField(upload_to='goods/images',max_length=200,verbose_name="商品封面图")
+    goods_front_image = models.ImageField(upload_to='goods/images',max_length=200,verbose_name="商品封面图",null=True,blank=True)
     market_price = models.FloatField(verbose_name="商品市场价")
     shop_price = models.FloatField(verbose_name='商品店铺价')
     ship_free = models.BooleanField(default=True,verbose_name="是否包邮")
@@ -57,7 +57,7 @@ class Goods(models.Model):
 
 class CategoryBrand(models.Model):
     category = models.ForeignKey(GoodsCategory,verbose_name="所属类别",related_name='brands')
-    image=  models.ImageField(upload_to='brand/images',verbose_name="赞助图片",max_length=200)
+    image=  models.ImageField(upload_to='brand/images',verbose_name="赞助图片",max_length=200,null=True,blank=True)
     name = models.CharField(max_length=30,verbose_name="赞助名称")
     add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
 
@@ -72,7 +72,7 @@ class CategoryBrand(models.Model):
 
 class GoodsImage(models.Model):
     goods = models.ForeignKey(Goods,verbose_name="所属商品",related_name='images')
-    image = models.ImageField(upload_to='goods/images',verbose_name="商品轮播图片",max_length=200)
+    image = models.ImageField(upload_to='goods/images',verbose_name="商品轮播图片",max_length=200,null=True,blank=True)
     add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
 
     def __str__(self):
@@ -85,7 +85,7 @@ class GoodsImage(models.Model):
 
 class Banner(models.Model):
     goods = models.ForeignKey(Goods, verbose_name="所属商品", related_name='banners')
-    image = models.ImageField(upload_to='goods/images', verbose_name="首页轮播图片", max_length=200)
+    image = models.ImageField(upload_to='goods/images', verbose_name="首页轮播图片", max_length=200,null=True,blank=True)
     index = models.IntegerField(verbose_name="轮播顺序")
     add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
 

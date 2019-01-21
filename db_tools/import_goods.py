@@ -26,7 +26,7 @@ for item in row_data:
     goods = Goods()
     goods.name = item['name']
     goods.goods_brief = item['desc'] if item['desc'] else ''
-    goods.desc = item['goods_desc'] if item['goods_desc'] else ''
+    goods.goods_desc = item['goods_desc'] if item['goods_desc'] else ''
     goods.market_price = float(item['market_price'].replace('￥','').replace('元',''))
     goods.shop_price = float(item['sale_price'].replace('￥','').replace('元',''))
     goods.goods_front_image = item['images'][0] if item['images'] else ''
