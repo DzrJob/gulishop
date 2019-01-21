@@ -65,7 +65,7 @@ class UserViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.Upd
 
     def get_object(self):
         '''
-        这个方法，是让我们在获取某个用户的时候，无论填什么样的id，拿到的永远是当前登陆的用户
+        获取某个用户的时候，无论填什么样的id，拿到的永远是当前登陆的用户
         :return:
         '''
         return self.request.user
