@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework_jwt.utils import jwt_payload_handler, jwt_encode_handler
 from gulishop.settings import YUNPIAN_KEY
 from users.models import VerifyCode, UserProfile
-from users.serializer import VerifyCodeSerializer, UserSerializer
+from users.serializers import VerifyCodeSerializer, UserSerializer
 from utils.yunpian import YunPian
 # Create your views here.
 
