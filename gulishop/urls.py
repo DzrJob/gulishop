@@ -28,7 +28,8 @@ from apps.goods.views import GoodsViewSet, CategoryViewSet
 from apps.users.views import VerifyCodeViewSet, UserViewSet
 from rest_framework import routers
 from operations.views import UserFavViewSet,UserLeavingMessageViewSet,UserAddressViewSet
-from trade.views import ShoppingCartViewSet
+from trade.views import ShoppingCartViewSet, OrderInfoViewSet
+
 """
 # 创建默认的router对象，并注册视图集
 # 与SimpleRouter的区别，DefaultRouter会多附带一个默认的API根视图，返回一个包含所有列表视图的超链接响应数据。
@@ -46,6 +47,7 @@ router.register(r'userfavs',UserFavViewSet,base_name='userfavs')
 router.register(r'messages',UserLeavingMessageViewSet,base_name='messages')
 router.register(r'address',UserAddressViewSet,base_name='address')
 router.register(r'shopcarts',ShoppingCartViewSet,base_name='shopcarts')
+router.register(r'orders',OrderInfoViewSet,base_name='orders')
 
 
 urlpatterns = [
