@@ -60,7 +60,7 @@ class UserViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.Upd
     authentication_classes = (SessionAuthentication, JSONWebTokenAuthentication)
     # 权限
     # 只允许经过身份验证的用户访问。
-    # 允许访问对象级权限，只允许对象的所有者编辑它。
+    # 允许访问对象级权限，只允许对象的所有者编辑它。可不写
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
 
     def get_object(self):
