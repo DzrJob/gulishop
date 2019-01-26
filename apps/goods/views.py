@@ -1,3 +1,5 @@
+from rest_framework.response import Response
+
 from goods.models import Goods, GoodsCategory
 from goods.filters import GoodsFilter
 from goods.paginations import GoodsPagination
@@ -30,6 +32,14 @@ class GoodsViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Ge
     # 用于排序的字段
     ordering_fields = ('shop_price',)
     # get post delete put 等方法放在路由当中去做绑定
+
+    # 每次点击产品详情为该商品添加访问量，需要重写方法
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.click_num += 1
+        instance.save()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 """使用rest_framework APIView扩展类GenericAPIView与mixins组合 实现接口"""
