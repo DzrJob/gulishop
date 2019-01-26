@@ -1,0 +1,15 @@
+APPID
+2016092300577425
+支付宝网关
+https://openapi.alipaydev.com/gateway.do
+
+商家账号okdymo5375@sandbox.com
+商户UID2088102176904972
+登录密码111111
+
+买家账号atuppm3502@sandbox.com
+登录密码111111
+支付密码111111
+用户名称沙箱环境
+证件类型身份证(IDENTITY_CARD)
+证件号码839387194707033249

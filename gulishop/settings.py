@@ -69,7 +69,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -190,3 +190,8 @@ MOBILE_RE = '^((13[0-9])|(14[5,7])|(15[0-3,5-9])|(17[0,3,5-8])|(18[0-9])|166|198
 
 # 云片秘钥
 YUNPIAN_KEY = '94e3cafc4543943d7c4de9a2fd687a5f'
+
+# 支付宝相关
+app_id = '2016092300577425'
+private_key = os.path.join(BASE_DIR,'apps/trade/keys/private_key_2048.txt')
+ali_key = os.path.join(BASE_DIR,'apps/trade/keys/ali_key_2048.txt')

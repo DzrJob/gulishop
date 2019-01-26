@@ -1,8 +1,14 @@
+from datetime import datetime
+
 from django.shortcuts import render
 from rest_framework import mixins, viewsets
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.views import APIView
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+
+from gulishop.settings import app_id, private_key, ali_key
+from utils.Alipay import AliPay
 from utils.permissions import IsOwnerOrReadOnly
 from rest_framework.response import Response
 from rest_framework import status
@@ -75,6 +81,28 @@ class OrderInfoViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins
         else:
             return OrderInfoSerializer
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        alipay = AliPay(
+            appid=app_id,
+            app_notify_url='http://127.0.0.1:8000/alipay_return/',
+            app_private_key_path=private_key,
+            alipay_public_key_path=ali_key,  # 支付宝的公钥，验证支付宝回传消息使用，不是你自己的公钥,
+            debug=True,  # 默认False,
+            return_url='http://127.0.0.1:8000/alipay_return/'
+        )
+        url = alipay.direct_pay(
+            subject=instance.order_sn,
+            out_trade_no=instance.order_sn,
+            total_amount=instance.order_mount
+        )
+        # 沙箱环境
+        re_url = "https://openapi.alipaydev.com/gateway.do?{data}".format(data=url)
+        serializer = self.get_serializer(instance)
+        ret = serializer.data
+        ret['alipay_url'] = re_url
+        return Response(ret)
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -95,10 +123,31 @@ class OrderInfoViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins
 
         # 第三步：清空购物车
         cart_list.delete()
+
+        # 第四步：生成订单支付链接，加入我们的返回数据当中，为了让前端可以去请求这个支付页面
+        alipay = AliPay(
+            appid=app_id,
+            app_notify_url='http://127.0.0.1:8000/alipay_return/',
+            app_private_key_path=private_key,
+            alipay_public_key_path=ali_key,  # 支付宝的公钥，验证支付宝回传消息使用，不是你自己的公钥,
+            debug=True,  # 默认False,
+            return_url='http://127.0.0.1:8000/alipay_return/'
+        )
+        url = alipay.direct_pay(
+            subject=order.order_sn,
+            out_trade_no=order.order_sn,
+            total_amount=order.order_mount
+        )
+
+        # 沙箱环境
+        re_url = "https://openapi.alipaydev.com/gateway.do?{data}".format(data=url)
+
         # 重新读取serializer
         serializer = self.get_serializer(order)
+        ret = serializer.data
+        ret['alipay_url'] = re_url
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(ret, status=status.HTTP_201_CREATED, headers=headers)
 
     # 获得唯一订单号方法
     def get_order_sn(self):
@@ -106,3 +155,83 @@ class OrderInfoViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins
                                                         user_id=str(self.request.user.id),
                                                         random=str(random.randint(10, 99)))
         return order_sn
+
+
+class AliPayView(APIView):
+
+    def post(self, request):
+        """
+        处理支付宝的notify_url
+        """
+        # 1. 先将sign剔除掉
+        data_dict = {}  # 接收支付宝传递参数
+        for key, value in request.POST.items():  # 循环参数
+            data_dict[key] = value  # 将参数添加到字典
+        sign = data_dict.pop("sign", None)  # 单独拿出sign字段
+        # 2. 生成一个Alipay对象
+        alipay = AliPay(  # 传递参数初始化支付类
+            appid="",  # 设置签约的appid
+            app_notify_url="http://127.0.0.1:8000/alipay_return/",  # 异步支付通知url
+            app_private_key_path=private_key,  # 设置应用私钥
+            alipay_public_key_path=ali_key,  # 支付宝的公钥，验证支付宝回传消息使用，不是你自己的公钥,
+            debug=True,  # 设置是否是沙箱环境，True是沙箱环境 默认False,
+            return_url="http://127.0.0.1:8000/alipay_return/"  # 同步支付通知url，跳转地址
+        )
+        # 3. 进行验签，确保这是支付宝给我们的
+        result = alipay.verify(data_dict, sign)
+        if result:
+            order_sn = data_dict.get('out_trade_no', '')
+            trade_no = data_dict.get('trade_no', '')
+            pay_time = datetime.now()
+            pay_status = data_dict.get('trade_status', 'TRADE_SUCCESS')
+
+            order_list = OrderInfo.objects.filter(order_sn=order_sn)
+            if order_list:
+                order = order_list[0]
+                order.pay_status = pay_status
+                order.pay_time = pay_time
+                order.trade_no = trade_no
+                order.save()
+                # 将success返回给支付宝，支付宝就不会一直不停的继续发消息了。
+                return Response('success')
+
+    def get(self, request):
+        """
+        处理支付宝的return_url返回
+        """
+        data_dict = {}
+        # 1. 获取GET中参数
+        for key, value in request.GET.items():
+            data_dict[key] = value
+        # 2. 取出sign
+        sign = data_dict.pop("sign", None)
+        # 3. 生成ALipay对象
+        alipay = AliPay(
+            appid=app_id,
+            app_notify_url="http://127.0.0.1:8080",
+            app_private_key_path=private_key,
+            alipay_public_key_path=ali_key,  # 支付宝的公钥，验证支付宝回传消息使用，不是你自己的公钥,
+            debug=True,  # 默认False,
+            return_url="http://127.0.0.1:8080"
+        )
+        result = alipay.verify(data_dict, sign)
+        # 这里可以不做操作。因为不管发不发return url。notify url都会修改订单状态。
+        if result:
+            order_sn = data_dict.get('out_trade_no', '')
+            trade_no = data_dict.get('trade_no', '')
+            pay_time = datetime.now()
+            pay_status = data_dict.get('trade_status', 'TRADE_SUCCESS')
+
+            order_list = OrderInfo.objects.filter(order_sn=order_sn)
+            if order_list:
+                order = order_list[0]
+                order.pay_status = pay_status
+                order.pay_time = pay_time
+                order.trade_no = trade_no
+                order.save()
+                from django.shortcuts import redirect, reverse
+                ret = redirect(reverse('index'))
+                # ret = redirect('http://127.0.0.1:8080')
+                # 可以直接去到订单列表页
+                ret.set_cookie('nextPath', 'pay', 2)
+                return ret

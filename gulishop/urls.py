@@ -27,9 +27,9 @@ from gulishop.settings import MEDIA_ROOT
 from apps.goods.views import GoodsViewSet, CategoryViewSet
 from apps.users.views import VerifyCodeViewSet, UserViewSet
 from rest_framework import routers
-from operations.views import UserFavViewSet,UserLeavingMessageViewSet,UserAddressViewSet
-from trade.views import ShoppingCartViewSet, OrderInfoViewSet
-
+from operations.views import UserFavViewSet, UserLeavingMessageViewSet, UserAddressViewSet
+from trade.views import ShoppingCartViewSet, OrderInfoViewSet, AliPayView
+from django.views.generic import TemplateView
 """
 # 创建默认的router对象，并注册视图集
 # 与SimpleRouter的区别，DefaultRouter会多附带一个默认的API根视图，返回一个包含所有列表视图的超链接响应数据。
@@ -43,12 +43,11 @@ router.register(r'goods', GoodsViewSet, base_name='goods')
 router.register(r'categorys', CategoryViewSet, base_name='categorys')
 router.register(r'code', VerifyCodeViewSet, base_name='code')
 router.register(r'users', UserViewSet, base_name='users')
-router.register(r'userfavs',UserFavViewSet,base_name='userfavs')
-router.register(r'messages',UserLeavingMessageViewSet,base_name='messages')
-router.register(r'address',UserAddressViewSet,base_name='address')
-router.register(r'shopcarts',ShoppingCartViewSet,base_name='shopcarts')
-router.register(r'orders',OrderInfoViewSet,base_name='orders')
-
+router.register(r'userfavs', UserFavViewSet, base_name='userfavs')
+router.register(r'messages', UserLeavingMessageViewSet, base_name='messages')
+router.register(r'address', UserAddressViewSet, base_name='address')
+router.register(r'shopcarts', ShoppingCartViewSet, base_name='shopcarts')
+router.register(r'orders', OrderInfoViewSet, base_name='orders')
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
@@ -66,12 +65,17 @@ urlpatterns = [
     # 绑定 接口的请求方法（接口中可以不写get方法了）
     # url(r'^goods/$', GoodsViewSet.as_view({'get': 'list'})),
     # 添加路由数据方式一
-    # url(r'^', include(router.urls))
+    url(r'^', include(router.urls)),
 
     # 是token认证的登陆方式
     # url(r'^login/', views.obtain_auth_token),
     # JWTtoken认证的登陆方式
     url(r'^login/', obtain_jwt_token),
+
+    # # 接收支付宝的响应路由
+    url('^alipay_return/$', AliPayView.as_view(), name='alipay'),
+    # 直接模板展示
+    url(r'^index/$', TemplateView.as_view(template_name='index.html'), name='index')
 ]
-# 添加路由数据方式二
-urlpatterns += router.urls
+# # 添加路由数据方式二
+# urlpatterns += router.urls
