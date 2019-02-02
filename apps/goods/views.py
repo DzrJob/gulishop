@@ -1,13 +1,18 @@
 from rest_framework.response import Response
 
-from goods.models import Goods, GoodsCategory
+from goods.models import Goods, GoodsCategory, Banner
 from goods.filters import GoodsFilter
 from goods.paginations import GoodsPagination
-from goods.serializers import GoodsSerializer, CategorySerializer
+from goods.serializers import GoodsSerializer, CategorySerializer, BannerSerializer
 
 # 导入rest_framework
 from rest_framework import mixins, generics, pagination, filters, viewsets
 from django_filters.rest_framework import DjangoFilterBackend
+
+# 首页轮播图
+class BannerViewSet(mixins.ListModelMixin,mixins.RetrieveModelMixin,viewsets.GenericViewSet):
+    queryset = Banner.objects.all().order_by('-index')
+    serializer_class = BannerSerializer
 
 # 商品分类接口
 class CategoryViewSet(mixins.ListModelMixin,mixins.RetrieveModelMixin,viewsets.GenericViewSet):

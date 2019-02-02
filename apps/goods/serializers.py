@@ -1,6 +1,6 @@
 # -*-coding:utf-8-*-
 __author__ = 'Dzr'
-from goods.models import Goods, GoodsCategory, GoodsImage
+from goods.models import Goods, GoodsCategory, GoodsImage, Banner
 from rest_framework import serializers
 
 
@@ -54,4 +54,11 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GoodsCategory
+        fields = '__all__'
+
+
+# 首页轮播图
+class BannerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Banner
         fields = '__all__'

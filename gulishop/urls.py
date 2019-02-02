@@ -24,7 +24,7 @@ from django.views.static import serve
 # 导入工程配置文件中的MEDIA_ROOT
 from gulishop.settings import MEDIA_ROOT
 # from apps.goods.views import GoodsView
-from apps.goods.views import GoodsViewSet, CategoryViewSet
+from apps.goods.views import GoodsViewSet, CategoryViewSet, BannerViewSet
 from apps.users.views import VerifyCodeViewSet, UserViewSet
 from rest_framework import routers
 from operations.views import UserFavViewSet, UserLeavingMessageViewSet, UserAddressViewSet
@@ -48,6 +48,8 @@ router.register(r'messages', UserLeavingMessageViewSet, base_name='messages')
 router.register(r'address', UserAddressViewSet, base_name='address')
 router.register(r'shopcarts', ShoppingCartViewSet, base_name='shopcarts')
 router.register(r'orders', OrderInfoViewSet, base_name='orders')
+router.register(r'banners',BannerViewSet,base_name='banners')
+
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
