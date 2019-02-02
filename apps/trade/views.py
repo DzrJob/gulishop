@@ -119,6 +119,9 @@ class OrderInfoViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins
             order_goods.order = order
             order_goods.goods = cart.goods
             order_goods.goods_num = cart.nums
+            # 订单创建后，商品库存量-1
+            order_goods.goods.goods_num -= cart.nums
+            order_goods.goods.save()
             order_goods.save()
 
         # 第三步：清空购物车
@@ -192,6 +195,11 @@ class AliPayView(APIView):
                 order.pay_time = pay_time
                 order.trade_no = trade_no
                 order.save()
+                # 订单完成 为所有订单商品 添加订单商品数量的销售量
+                order_goods_list = order.goods.all()
+                for order_goods in order_goods_list:
+                    order_goods.goods.sold_num += order_goods.goods_num
+                    order_goods.save()
                 # 将success返回给支付宝，支付宝就不会一直不停的继续发消息了。
                 return Response('success')
 
