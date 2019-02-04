@@ -7,8 +7,10 @@ from goods.paginations import GoodsPagination
 from goods.serializers import GoodsSerializer, CategorySerializer, BannerSerializer, IndexCategorySerializer
 
 # 导入rest_framework
-from rest_framework import mixins, generics, pagination, filters, viewsets
+from rest_framework import mixins, generics, pagination, filters, viewsets, throttling
 from django_filters.rest_framework import DjangoFilterBackend
+# 缓存
+from rest_framework_extensions.cache.mixins import CacheResponseMixin
 
 # 首页类别商品接口
 class IndexCategoryViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
@@ -27,7 +29,9 @@ class CategoryViewSet(mixins.ListModelMixin,mixins.RetrieveModelMixin,viewsets.G
 
 
 """使用rest_framework GenericAPIView扩展类GenericViewSet与mixins组合 实现接口"""
-class GoodsViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+# CacheResponseMixin 缓存设置
+# class GoodsViewSet(CacheResponseMixin,mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class GoodsViewSet(CacheResponseMixin,mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     # 必要的查询集
     queryset = Goods.objects.all()
     # 过滤配置（区间，搜索，排序）
@@ -36,8 +40,11 @@ class GoodsViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Ge
     serializer_class = GoodsSerializer
     # 分页配置
     pagination_class = GoodsPagination
+    # 频率
+    throttle_classes = (throttling.AnonRateThrottle,throttling.UserRateThrottle)
     # 用于区间功能的字段
     filter_class = GoodsFilter
+
     # 用于搜索功能的字段
     search_fields = ('name',)
     # 用于排序的字段

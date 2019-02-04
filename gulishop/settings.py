@@ -164,7 +164,6 @@ REST_FRAMEWORK = {
     # # 分页配置
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     # 'PAGE_SIZE': 10,
-
     # # 认证配置
     # 'DEFAULT_AUTHENTICATION_CLASSES': (
     #     'rest_framework.authentication.BasicAuthentication',
@@ -174,15 +173,46 @@ REST_FRAMEWORK = {
     #     # jwt认证
     #     'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     # )
+
+    # 频率 限速
+    'DEFAULT_THROTTLE_CLASSES': (
+        # 匿名用户
+        'rest_framework.throttling.AnonRateThrottle',
+        # 登录用户
+        'rest_framework.throttling.UserRateThrottle'
+    ),
+    # second, minute, hour or day
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/minute',
+        'user': '1000/minute'
+    }
 }
+
 
 # 跨站访问
 CORS_ORIGIN_ALLOW_ALL = True
 
-# 过期时间
+# token过期时间
 import datetime
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
+}
+
+# 缓存过期时间
+REST_FRAMEWORK_EXTENSIONS = {
+    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 15
+}
+
+#redis缓存的配置
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        # 缓存到库1 （0-15）
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
 }
 
 # 手机正则
