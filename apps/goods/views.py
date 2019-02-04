@@ -1,13 +1,19 @@
+from django.db.models import Q
 from rest_framework.response import Response
 
 from goods.models import Goods, GoodsCategory, Banner
 from goods.filters import GoodsFilter
 from goods.paginations import GoodsPagination
-from goods.serializers import GoodsSerializer, CategorySerializer, BannerSerializer
+from goods.serializers import GoodsSerializer, CategorySerializer, BannerSerializer, IndexCategorySerializer
 
 # 导入rest_framework
 from rest_framework import mixins, generics, pagination, filters, viewsets
 from django_filters.rest_framework import DjangoFilterBackend
+
+# 首页类别商品接口
+class IndexCategoryViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
+    queryset = GoodsCategory.objects.filter(Q(name='生鲜食品')|Q(name='奶类食品'))
+    serializer_class = IndexCategorySerializer
 
 # 首页轮播图
 class BannerViewSet(mixins.ListModelMixin,mixins.RetrieveModelMixin,viewsets.GenericViewSet):

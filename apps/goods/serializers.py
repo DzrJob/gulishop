@@ -1,6 +1,8 @@
 # -*-coding:utf-8-*-
+from django.db.models import Q
+
 __author__ = 'Dzr'
-from goods.models import Goods, GoodsCategory, GoodsImage, Banner
+from goods.models import Goods, GoodsCategory, GoodsImage, Banner, CategoryBrand
 from rest_framework import serializers
 
 
@@ -61,4 +63,43 @@ class CategorySerializer(serializers.ModelSerializer):
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Banner
+        fields = '__all__'
+
+
+class CategoryBrandsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CategoryBrand
+        fields = '__all__'
+
+
+# 首页商品分类显示
+class IndexCategorySerializer(serializers.ModelSerializer):
+    # 显示的二级分类
+    sub_cat = CategorySerializer2(many=True)
+    # 赞助商
+    brands = CategoryBrandsSerializer(many=True)
+    # 自己定义方法获取一级类别商品
+    goods = serializers.SerializerMethodField()
+    # 自定义方法获得广告
+    ad_goods = serializers.SerializerMethodField()
+
+    def get_goods(self, obj):
+        """
+        拿到一级类别下的所有商品
+        :param obj: 序列化的那个一级类别
+        :return: 自己序列化的数据
+        """
+        all_goods = Goods.objects.filter(Q(category_id=obj.id) | Q(category__parent_category_id=obj.id) | Q(
+            category__parent_category__parent_category_id=obj.id))
+        serializers = GoodsSerializer(all_goods,many=True)
+        return serializers.data
+
+    def get_ad_goods(self,obj):
+        ad_goods = Goods.objects.filter(Q(category_id=obj.id) | Q(category__parent_category_id=obj.id) | Q(
+            category__parent_category__parent_category_id=obj.id))[0]
+        serializers = GoodsSerializer(ad_goods, many=False)
+        return serializers.data
+
+    class Meta:
+        model = GoodsCategory
         fields = '__all__'
