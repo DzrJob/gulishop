@@ -60,9 +60,10 @@ INSTALLED_APPS = [
     'django_filters',
     # 跨站访问
     'corsheaders',
-    # token认证
+    # token认证，不能设置过期，已用JWT
     # 'rest_framework.authtoken',
-
+    # 三方登录
+    'social_django',
 ]
 # 中间件
 MIDDLEWARE = [
@@ -93,6 +94,9 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 # 将media加入上下文渲染，模板中使用{{MEDIA_URL}}
                 'django.template.context_processors.media',
+                # 三方登录
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -188,12 +192,12 @@ REST_FRAMEWORK = {
     }
 }
 
-
 # 跨站访问
 CORS_ORIGIN_ALLOW_ALL = True
 
 # token过期时间
 import datetime
+
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
 }
@@ -203,7 +207,7 @@ REST_FRAMEWORK_EXTENSIONS = {
     'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 15
 }
 
-#redis缓存的配置
+# redis缓存的配置
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -221,7 +225,23 @@ MOBILE_RE = '^((13[0-9])|(14[5,7])|(15[0-3,5-9])|(17[0,3,5-8])|(18[0-9])|166|198
 # 云片秘钥
 YUNPIAN_KEY = '94e3cafc4543943d7c4de9a2fd687a5f'
 
-# 支付宝相关
+# 支付宝相关 应用 密钥 公钥
 app_id = '2016092300577425'
-private_key = os.path.join(BASE_DIR,'apps/trade/keys/private_key_2048.txt')
-ali_key = os.path.join(BASE_DIR,'apps/trade/keys/ali_key_2048.txt')
+private_key = os.path.join(BASE_DIR, 'apps/trade/keys/private_key_2048.txt')
+ali_key = os.path.join(BASE_DIR, 'apps/trade/keys/ali_key_2048.txt')
+
+# 第三方登陆所需要的认证
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.weibo.WeiboOAuth2',
+    'social_core.backends.weixin.WeixinOAuth2',
+    'social_core.backends.qq.QQOAuth2'
+
+)
+
+# 第三方登陆所需要的 应用信息
+SOCIAL_AUTH_WEIBO_KEY = '935288552'
+SOCIAL_AUTH_WEIBO_SECRET = '468ab76df276d2298167b81f5b901e48'
+
+# 第三方登陆成功后跳转的路径
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/index/'

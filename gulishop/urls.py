@@ -73,12 +73,15 @@ urlpatterns = [
     # 是token认证的登陆方式
     # url(r'^login/', views.obtain_auth_token),
     # JWTtoken认证的登陆方式
-    url(r'^login/', obtain_jwt_token),
+    url(r'^login/$', obtain_jwt_token),
 
     # # 接收支付宝的响应路由
     url('^alipay_return/$', AliPayView.as_view(), name='alipay'),
     # 直接模板展示
-    url(r'^index/$', TemplateView.as_view(template_name='index.html'), name='index')
+    url(r'^index/$', TemplateView.as_view(template_name='index.html'), name='index'),
+    # 第三方登录
+    url('', include('social_django.urls', namespace='social')),
+
 ]
 # # 添加路由数据方式二
 # urlpatterns += router.urls
